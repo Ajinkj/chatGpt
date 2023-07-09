@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT PWA</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 400px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .install-popup {
+      margin-top: 20px;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .container {
+        max-width: 90%;
+      }
+    }
+  </style>
+  <!-- Manifest Link -->
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to ChatGPT PWA</h1>
+    <p>This is a progressive web app that allows you to access the ChatGPT chat page.</p>
+    <button id="chatBtn" class="btn btn-primary">Try ChatGPT</button>
+    <div id="installPopup" class="install-popup alert alert-primary alert-dismissible fade" role="alert">
+      <strong>Install ChatGPT PWA</strong>
+      <p>Install the ChatGPT app to access it more conveniently.</p>
+      <button id="installBtn" type="button" class="btn btn-primary">Install</button>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Button click event
+    document.getElementById('chatBtn').addEventListener('click', function() {
+      window.location.href = 'https://chat.openai.com/';
+    });
+
+    // Show install popup after 3 seconds
+    setTimeout(function() {
+      // Check if the app is already installed
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        return; // Don't show the install popup if the app is already installed
+      }
+
+      // Show the install popup
+      var installPopup = document.getElementById('installPopup');
+      installPopup.classList.add('show');
+    }, 3000);
+
+    // Install button click event
+    document.getElementById('installBtn').addEventListener('click', function() {
+      // Prompt the user to install the PWA
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        return; // Don't show the install prompt if the app is already installed
+      }
+
+      window.addEventListener('beforeinstallprompt', function(event) {
+        event.preventDefault(); // Prevent the default installation prompt
+        var deferredPrompt = event;
+        deferredPrompt.prompt(); // Show the deferred prompt
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the installation prompt.');
+          } else {
+            console.log('User dismissed the installation prompt.');
+          }
+          deferredPrompt = null; // Reset the deferred prompt
+        });
+      });
+    });
+  </script>
+</body>
+</html>
